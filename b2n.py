@@ -60,20 +60,23 @@ if args.oneline:
     print "%.0f" % srednio
 else:
     print """
-    Wynagrodzenie netto:
+    Net compensation:
 
-    styczen     %.0f PLN
-    luty        %.0f PLN
-    marzec      %.0f PLN
-    kwiecien    %.0f PLN
-    maj         %.0f PLN
-    czerwiec    %.0f PLN
-    lipiec      %.0f PLN
-    sierpien    %.0f PLN
-    wrzesien    %.0f PLN
-    pazdziernik %.0f PLN
-    listopad    %.0f PLN
-    grudzien    %.0f PLN
+    January     %.0f PLN
+    February    %.0f PLN
+    March       %.0f PLN
+    April       %.0f PLN
+    May         %.0f PLN
+    June        %.0f PLN
+    July        %.0f PLN
+    August      %.0f PLN
+    September   %.0f PLN
+    October     %.0f PLN
+    November    %.0f PLN
+    December    %.0f PLN
 
-    srednio:    %.0f PLN miesiecznie
+    average:    %.0f PLN per month
+
+    Disclaimer: calculations based on scraping infor.pl online calculator. Don't include additional
+    elements, i.e. sick leave, medical care deduction, English lessons, etc. Values rounded to 1 PLN.
     """ % (netto+(srednio,))
