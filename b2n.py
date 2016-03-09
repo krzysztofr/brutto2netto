@@ -8,7 +8,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Calculate net salary from gross salary.")
 parser.add_argument('amount', type=int, help="Gross amount per month.")
-parser.add_argument('--oneline', dest="oneline", default=False, action='store_true', help="Return average value as oneline response.")
+parser.add_argument('-t', dest="return_type", default="text", choices=["text", "oneline", "json"], help="Select type of response. When 'oneline' selected, it will be only average value.")
 
 args = parser.parse_args()
 
@@ -56,9 +56,9 @@ netto = (
 
 srednio = sum(netto)/12
 
-if args.oneline:
+if args.return_type == "oneline":
     print "%.0f" % srednio
-else:
+elif args.return_type == "text":
     print """
     Net compensation:
 
@@ -80,3 +80,5 @@ else:
     Disclaimer: calculations based on scraping infor.pl online calculator. Don't include additional
     elements, i.e. sick leave, medical care deduction, English lessons, etc. Values rounded to 1 PLN.
     """ % (netto+(srednio,))
+elif args.return_type == "json":
+    print "json"
