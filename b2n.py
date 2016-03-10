@@ -12,6 +12,7 @@ def calculate_comp(amount):
     buf = StringIO()
     c = pycurl.Curl()
     c.setopt(c.URL, 'http://www.infor.pl/kalkulatory/kalkulator-wynagrodzen-plac.html')
+    c.setopt(c.USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36")
 
     post_data = {
         'kwota': amount,
@@ -90,8 +91,8 @@ def print_values(netto, average, amount, return_type="text"):
 
 
 parser = argparse.ArgumentParser(description="Calculate net salary from gross salary.")
-parser.add_argument('amount', type=int, help="Gross amount per month.")
 parser.add_argument('-t', dest="return_type", default="text", choices=["text", "oneline", "json"], help="Select type of response. When 'oneline' selected, it will be only average value.")
+parser.add_argument('amount', type=int, help="Gross amount per month.", nargs='?')
 parser.add_argument('-i', dest="interactive", action="store_true", help="Enter interactive mode. Type 'exit' or Ctrl+C to finish.")
 
 args = parser.parse_args()
