@@ -5,6 +5,7 @@ from StringIO import StringIO
 from urllib import urlencode
 from datetime import date
 import argparse
+import json
 
 parser = argparse.ArgumentParser(description="Calculate net salary from gross salary.")
 parser.add_argument('amount', type=int, help="Gross amount per month.")
@@ -54,10 +55,11 @@ netto = (
         float(bs.find_all('td')[105].string)
 )
 
-srednio = sum(netto)/12
+average = sum(netto)/12
 
 if args.return_type == "oneline":
-    print "%.0f" % srednio
+    print "%.0f" % average
+    
 elif args.return_type == "text":
     print """
     Net compensation:
@@ -79,6 +81,16 @@ elif args.return_type == "text":
 
     Disclaimer: calculations based on scraping infor.pl online calculator. Don't include additional
     elements, i.e. sick leave, medical care deduction, English lessons, etc. Values rounded to 1 PLN.
-    """ % (netto+(srednio,))
+    """ % (netto+(average,))
+
 elif args.return_type == "json":
-    print "json"
+    print json.dumps({
+        "amount": amount,
+        "compensation": {
+            "monthly_avg": round(average,2),
+            "months": (netto)
+        }
+    })
+
+        
+
