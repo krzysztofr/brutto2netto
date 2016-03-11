@@ -54,10 +54,10 @@ def calculate_comp(amount):
 
 
 def print_values(netto, average, amount, return_type="text"):
-    if args.return_type == "oneline":
+    if return_type == "oneline":
         print "%.0f" % average
 
-    elif args.return_type == "text":
+    elif return_type == "text":
         print """
         Net compensation:
 
@@ -80,7 +80,7 @@ def print_values(netto, average, amount, return_type="text"):
         elements, i.e. sick leave, medical care deduction, English lessons, etc. Values rounded to 1 PLN.
         """ % (netto+(average,))
 
-    elif args.return_type == "json":
+    elif return_type == "json":
         print json.dumps({
             "amount": amount,
             "compensation": {
