@@ -1,2 +1,0 @@
-beautifulsoup4==4.4.1
-pycurl==7.43.0

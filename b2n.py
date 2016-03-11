@@ -1,52 +1,55 @@
 # encoding: utf-8
-from bs4 import BeautifulSoup
-import pycurl
-from StringIO import StringIO
-from urllib import urlencode
-from datetime import date
 import argparse
 import json
 
 
-def calculate_comp(amount):
-    buf = StringIO()
-    c = pycurl.Curl()
-    c.setopt(c.URL, 'http://www.infor.pl/kalkulatory/kalkulator-wynagrodzen-plac.html')
-    c.setopt(c.USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36")
+def calculate_comp(brutto):
 
-    post_data = {
-        'kwota': amount,
-        'rok':	date.today().year
+    # very ugly code, needs refactoring ;)
+    koszt_uzysk_przychodu = 111.25
+    emerytalna = .0976
+    rentowa = .015
+    chorobowa = .0245
+    zdrowotne = .09
+    zdrowotne2 = .0775
+    progi = {
+        1: .18,
+        2: .32
     }
+    limit_prog1 = 85528
+    kwota_wolna = 46.33
+    zus_limit = 121650
 
-    for i in range(1,13):
-        post_data['miesiac[%s]' % i] = amount
+    netto = ()
+    brutto_sum = 0
+    emer_rent_sum = 0
+    prog = 1
 
-    postfields = urlencode(post_data)
-    c.setopt(c.POSTFIELDS, postfields)
+    for month in range(1, 13):
+        brutto_sum += brutto
 
-    c.setopt(c.WRITEDATA, buf)
-    c.perform()
-    c.close()
+        if brutto_sum > zus_limit:
+            er_base = brutto - (brutto_sum - zus_limit)
+            if er_base < 0:
+                er_base = 0
+        else:
+            er_base = brutto
 
-    body = buf.getvalue().decode('utf8')
+        emer_rent = er_base*(emerytalna+rentowa)
+        emer_rent_sum += emer_rent
 
-    bs = BeautifulSoup(body, 'html.parser')
+        skl_spoleczne = brutto*chorobowa + emer_rent
+        skl_zdrowotne = (brutto - skl_spoleczne)*zdrowotne
+        skl_zdrowotne2 = (brutto - skl_spoleczne)*zdrowotne2
 
-    netto = (
-            float(bs.find_all('td')[6].string),
-            float(bs.find_all('td')[15].string),
-            float(bs.find_all('td')[24].string),
-            float(bs.find_all('td')[33].string),
-            float(bs.find_all('td')[42].string),
-            float(bs.find_all('td')[51].string),
-            float(bs.find_all('td')[60].string),
-            float(bs.find_all('td')[69].string),
-            float(bs.find_all('td')[78].string),
-            float(bs.find_all('td')[87].string),
-            float(bs.find_all('td')[96].string),
-            float(bs.find_all('td')[105].string)
-    )
+        zaliczka_podatku = round(brutto - skl_spoleczne - koszt_uzysk_przychodu, 0) * progi[prog] - kwota_wolna
+
+        if brutto_sum >= limit_prog1:
+            prog = 2
+
+        podatek = zaliczka_podatku - skl_zdrowotne2
+
+        netto = netto + (int(round(brutto - skl_spoleczne - skl_zdrowotne - podatek,0)),)
 
     average = sum(netto)/12
 
@@ -76,7 +79,7 @@ def print_values(netto, average, amount, return_type="text"):
 
         average:    %.0f PLN per month
 
-        Disclaimer: calculations based on scraping infor.pl online calculator. Don't include additional
+        Disclaimer: calculations may be erroneous. They are roughly rounded and don't include additional
         elements, i.e. sick leave, medical care deduction, English lessons, etc. Values rounded to 1 PLN.
         """ % (netto+(average,))
 
