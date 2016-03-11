@@ -115,6 +115,8 @@ if args.interactive:
 
 else:
     amount = args.amount
+    if amount is None:
+        raise ValueError("Provide numeric value greater than 0 as an argument.")
     netto, average = calculate_comp(amount)
     print_values(netto=netto, average=average, amount=amount, return_type=args.return_type)
 
