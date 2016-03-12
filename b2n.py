@@ -1,6 +1,7 @@
 # encoding: utf-8
 import argparse
 import json
+import sys
 
 
 def calculate_comp(brutto):
@@ -100,6 +101,9 @@ parser.add_argument('-i', dest="interactive", action="store_true", help="Enter i
 
 args = parser.parse_args()
 
+if args.amount is None and not args.interactive:
+    parser.print_help()
+    sys.exit()
 
 if args.interactive:
     while True:
