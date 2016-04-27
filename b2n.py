@@ -97,6 +97,7 @@ parser = argparse.ArgumentParser(description="Calculate net salary from gross sa
 parser.add_argument('-t', dest="return_type", default="text", choices=["text", "oneline", "json"], help="Select type of response. When 'oneline' selected, it will be only average value.")
 parser.add_argument('amount', type=int, help="Gross amount per month.", nargs='?')
 parser.add_argument('-i', dest="interactive", action="store_true", help="Enter interactive mode. Type 'exit' or Ctrl+C to finish.")
+parser.add_argument('-r', dest="reverse", action="store_true", help="Reverse calculation - get gross from net.")
 
 args = parser.parse_args()
 
@@ -115,6 +116,17 @@ if args.interactive:
         else:
             netto, average = calculate_comp(amount)
             print_values(netto=netto, average=average, amount=amount, return_type=args.return_type)
+
+# gets gross from net
+if args.reverse:
+    net_amount = args.amount
+    if net_amount is None:
+        raise ValueError("Provide numeric value greater than 0 as an argument.")
+    for gross_guess in range(net_amount, net_amount*2):
+        avg = calculate_comp(gross_guess)[1]
+        if avg - net_amount > 0:
+            print "net: %.0f PLN - gross: %.0f PLN" % (net_amount, gross_guess)
+            break
 
 else:
     amount = args.amount
