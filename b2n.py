@@ -1,6 +1,7 @@
 # encoding: utf-8
 import argparse
 import json
+import sys
 
 
 def calculate_comp(brutto):
@@ -101,6 +102,9 @@ parser.add_argument('-r', dest="reverse", action="store_true", help="Reverse cal
 
 args = parser.parse_args()
 
+if args.amount is None and not args.interactive:
+    parser.print_help()
+    sys.exit()
 
 if args.interactive:
     while True:
